@@ -28,7 +28,7 @@ def get_db_connection(user: str, password: str):
         "port": 5432,
         "user": user,
         "password": password,
-        "database": "CI",
+        "database": "BOTOGA_BDE",
     }
     try:
         conn = connect(**DATABASE_CONFIG)
@@ -51,13 +51,9 @@ def get_geojson_data(data: str = Query(..., description="Tipo de datos a consult
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
 
-        query = """
-                SELECT jsonb_build_object(
-                    'type', 'FeatureCollection',
-                    'nombreinfr',
-                    'features', jsonb_agg(ST_AsGeoJSON(t.*)::jsonb)
-                ) AS geojson
-                FROM infraestructuralinea AS t;
+        query = """    
+        SELECT l.nombre_de_l, ST_AsGeoJSON(l.geom) AS localidad
+        FROM "Catastro".localidades l;
                 """
 
         
